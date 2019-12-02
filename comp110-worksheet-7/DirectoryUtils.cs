@@ -9,6 +9,9 @@ namespace comp110_worksheet_7
 {
     public static class DirectoryUtils
     {
+        public static Tuple<string, long> min_file_size = new Tuple<string, long>(" ", long.MaxValue);
+        public static Tuple<string, long> max_file_size = new Tuple<string, long>(" ", long.MinValue);
+
         // Return the size, in bytes, of the given file
         public static long GetFileSize(string filePath)
         {
@@ -37,8 +40,12 @@ namespace comp110_worksheet_7
 
 
             GetFileArray(out file_array, directory);
+            /*
             for (int i = 0; i < GetFileSize(directory); i++)
                 file_size = file_size + GetFileSize(file_array[i]);
+                */
+            foreach (string file in file_array)
+                file_size = file_size + GetFileSize(file);
 
 
             return file_size;
@@ -85,7 +92,7 @@ namespace comp110_worksheet_7
 
             string[] file_array = Directory.GetFiles(directory);
             string[] subdir_array = Directory.GetDirectories(directory);
-            Tuple<string, long> min_file_size = new Tuple<string, long>(" ", long.MaxValue);
+            
 
             // GetFileArray(out file_array, directory);
 
@@ -112,7 +119,7 @@ namespace comp110_worksheet_7
         {
             string[] file_array = Directory.GetFiles(directory);
             string[] subdir_array = Directory.GetDirectories(directory);
-            Tuple<string, long> max_file_size = new Tuple<string, long>(" ", long.MinValue);
+            
 
             foreach (string file in file_array)
                 if (GetFileSize(file) > max_file_size.Item2)
