@@ -80,9 +80,9 @@ namespace comp110_worksheet_7
 
         }
 
-        // Get the path and size (in bytes) of the smallest file below the given directory
-        /* We load the arrays with the files (names and size) and a minimum tuple, then proceed with the usual min-finding algorithm.
-        We will perform the method recursively for every subdirectory.
+        // Get the path and size (in bytes) of the largest file below the given directory
+        /* We load the array with the files (names and size) and a minimum tuple with no name and min size, then use a query(LINQ) to find the smallest file and then
+         * save its size. A looped / recursive approach of the classic min-finding algorithm could've been also used.
         */
 
         public static Tuple<string, long> GetSmallestFile(string directory)
@@ -90,21 +90,16 @@ namespace comp110_worksheet_7
         {
 
 
-            string[] file_array = Directory.GetFiles(directory);
-            string[] subdir_array = Directory.GetDirectories(directory);
-            
+            string[] file_array;
+            GetFileArray(out file_array, directory);
+            // string[] subdir_array = Directory.GetDirectories(directory);
+            Tuple<string, long> file_size = new Tuple<string, long>(" ", long.MaxValue);
+            string min_file = (from file in file_array let length = GetFileSize(file) where length > 0 orderby length ascending select file).First();
+            long min_size = GetFileSize(min_file);
 
-            // GetFileArray(out file_array, directory);
+            file_size = new Tuple<string, long>(min_file, min_size);
 
-            foreach (string file in file_array)
-                if (GetFileSize(file) < min_file_size.Item2)
-                    min_file_size = new Tuple<string, long>(file, GetFileSize(file));
-
-            //Keep updating the min recursively
-            foreach (string subdir in subdir_array)
-                GetSmallestFile(subdir);
-
-            return min_file_size;
+            return file_size;
         }
 
 
@@ -112,24 +107,22 @@ namespace comp110_worksheet_7
 
 
         // Get the path and size (in bytes) of the largest file below the given directory
-        /* We load the arrays with the files (names and size) and a maximum tuple, then proceed with the usual max-finding algorithm.
-            We will perform the method recursively for every subdirectory.
+        /* We load the array with the files (names and size) and a maximum tuple with no name and max size, then use a query(LINQ) to find the largest file and then
+         * save its size. A looped / recursive approach of the classic max-finding algorithm could've been also used.
+          
             */
         public static Tuple<string, long> GetLargestFile(string directory)
         {
-            string[] file_array = Directory.GetFiles(directory);
-            string[] subdir_array = Directory.GetDirectories(directory);
-            
+            string[] file_array;
+            GetFileArray(out file_array, directory);
+            Tuple<string, long> file_size = new Tuple<string, long>(" ", long.MaxValue);
+            string max_file = (from file in file_array let length = GetFileSize(file) where length > 0 orderby length descending select file).First();
+            long max_size = GetFileSize(max_file);
 
-            foreach (string file in file_array)
-                if (GetFileSize(file) > max_file_size.Item2)
-                    max_file_size = new Tuple<string, long>(file, GetFileSize(file));
+            file_size = new Tuple<string, long>(max_file, max_size);
 
-            //Keep updating the max recursively
-            foreach (string subdir in subdir_array)
-                GetSmallestFile(subdir);
-
-            return max_file_size;
+            return file_size;
+           
         }
 
         // Get all files whose size is equal to the given value (in bytes) below the given directory
